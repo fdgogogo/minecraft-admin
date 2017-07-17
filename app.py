@@ -115,12 +115,36 @@ def user(username):
 
 
 @app.route('/users/<string:username>/do/burn', methods=['PATCH'])
-def home(username):
+def burn(username):
     secs = request.json.get('seconds') if request.json else None
     if not secs:
         return jsonify({'message': u'参数`seconds`是必填项'})
     ret = server.command('burn %s %s' % (username, secs))
     return jsonify({'message': ret})
+
+
+@app.route('/users/<string:username>/do/feed', methods=['PATCH'])
+def feed(username):
+    ret = server.command('feed %s' % (username))
+    return jsonify({'message': ret.strip()})
+
+
+@app.route('/users/<string:username>/do/heal', methods=['PATCH'])
+def heal(username):
+    ret = server.command('heal %s' % (username))
+    return jsonify({'message': ret.strip()})
+
+
+@app.route('/users/<string:username>/toggle_fly', methods=['POST'])
+def fly(username):
+    ret = server.command('fly %s' % (username))
+    return jsonify({'fly_mode': False if 'disabled' in ret.strip() else True})
+
+
+@app.route('/users/<string:username>/toggle_god', methods=['POST'])
+def god(username):
+    ret = server.command('god %s' % (username))
+    return jsonify({'god_mode': False if 'disabled' in ret.strip() else True})
 
 
 if __name__ == '__main__':
